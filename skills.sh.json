@@ -3,6 +3,11 @@
   "notGrouped": "bottom",
   "groupings": [
     {
+      "title": "Waves",
+      "description": "Execute a Plan as numbered Waves of parallel pull requests, gated by validation, halt labels, and merge.",
+      "skills": ["wave"]
+    },
+    {
       "title": "Validation",
       "description": "Evidence-backed pull request validation: independent code and security reviews, adversarial challenge, synthesis, and GitHub reporting.",
       "skills": [

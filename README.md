@@ -1,6 +1,6 @@
 # Skills
 
-Agent skills for an evidence-backed pull request validation cycle. Compatible with the [skills](https://www.npmjs.com/package/skills) CLI (`npx skills`).
+Agent skills for shipping a Plan as numbered Waves of pull requests, then running an evidence-backed validation cycle on each PR. Compatible with the [skills](https://www.npmjs.com/package/skills) CLI (`npx skills`).
 
 [![skills.sh](https://skills.sh/b/jakubchlebowicz/skills)](https://skills.sh/jakubchlebowicz/skills)
 
@@ -34,6 +34,7 @@ npx skills add /Users/jakubchlebowicz/Workspace/GitHub/skills
 
 | Skill | Role |
 | --- | --- |
+| `wave` | Cut a Plan into numbered Waves of parallel PRs; validate each PR; advance on merge |
 | `validate` | Coordinator: pin the PR, run reviews and challenges, synthesize, report |
 | `validate-with-code-review` | Diff review against repo standards and simplification |
 | `validate-with-security-review` | Diff review for trust-boundary and security defects |
