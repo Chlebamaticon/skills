@@ -2,26 +2,26 @@
 
 Agent skills for shipping a Plan as numbered Waves of pull requests, then running an evidence-backed validation cycle on each PR. Compatible with the [skills](https://www.npmjs.com/package/skills) CLI (`npx skills`).
 
-[![skills.sh](https://skills.sh/b/jakubchlebowicz/skills)](https://skills.sh/jakubchlebowicz/skills)
+[![skills.sh](https://skills.sh/b/Chlebamaticon/skills)](https://skills.sh/Chlebamaticon/skills)
 
 ## Install
 
 After this repository is on GitHub:
 
 ```bash
-npx skills add jakubchlebowicz/skills
+npx skills add Chlebamaticon/skills
 ```
 
 Install every skill in this repo:
 
 ```bash
-npx skills add jakubchlebowicz/skills --skill '*'
+npx skills add Chlebamaticon/skills --skill '*'
 ```
 
 Install only the coordinator:
 
 ```bash
-npx skills add jakubchlebowicz/skills --skill validate
+npx skills add Chlebamaticon/skills --skill validate
 ```
 
 From a local clone:
