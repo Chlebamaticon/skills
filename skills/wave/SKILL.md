@@ -1,7 +1,7 @@
 ---
 name: wave
 description: >-
-  Wave a Plan into numbered parallel PRs, write each task under waves/, and
+  Wave a Plan into numbered parallel PRs, write each task under .waves/, and
   ask for worker models before launch. Use when the user asks to proceed
   with a Plan.
 ---
@@ -53,15 +53,17 @@ Wave 2
 On every run (including when advancing to a later Wave), write or overwrite one markdown file per task. Paths are relative to the repo root:
 
 ```text
-waves/<topic>-<wave-no>/<kebab-title>-<task-no>.md
+.waves/<topic>-<wave-no>/<kebab-title>-<task-no>.md
 ```
+
+Default root is `.waves/` at the repo root. Do not write under `waves/` unless the user names a different root.
 
 - `<topic>` — kebab-case Plan title
 - `<wave-no>` — Wave number (`1`, `2`, …)
 - `<kebab-title>` — kebab-case of that task's title
 - `<task-no>` — full board id (`1A`, `1B`, `2A`, …)
 
-Example: `waves/checkout-redesign-1/add-login-1A.md`
+Example: `.waves/checkout-redesign-1/add-login-1A.md`
 
 Each file is the **full task brief**. Use this shape:
 
