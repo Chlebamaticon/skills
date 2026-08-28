@@ -21,6 +21,8 @@ If not in Multitask Mode, omit `run_in_background` so the wave blocks until ever
 
 Each worker prompt includes: the absolute `RUN_DIR`, instruction to follow the named skill and this contract, isolation (do not read sibling artifacts), the owned output file, and that file's done-when criterion. Subagents have no parent history — put all of that in the prompt. Do not paste another worker's findings into a prompt.
 
+Workers do not pick models — the parent sets `model` on the Task call. For **validate-with-code-review** and **validate-with-security-review**, prefer **GPT Pluto**: set `model` to the slug from this run's Task allow-list whose name matches GPT Pluto. Do not invent a slug. If no matching slug is listed, omit `model` or pass `inherit`, run those reviews on the parent model, and tell the user that GPT Pluto was unavailable. Challenge, synthesize, and GitHub reporter workers keep the Task default (`inherit`) unless the user names another model.
+
 ## 1. Pin the pull request and run
 
 Resolve the PR from a number/URL supplied by the user, otherwise `gh pr view --json number,url,baseRefName,headRefName,headRefOid`. Fetch the head and base refs, verify the three-dot diff is non-empty, and create `RUN_DIR` exactly as the contract specifies. Write atomic `context.json` and `changes.json`; include the changed-file list and a concise change summary derived from the diff.
