@@ -35,8 +35,9 @@ npx skills add /Users/jakubchlebowicz/Workspace/GitHub/skills
 | Skill | Role |
 | --- | --- |
 | `demoable-visually-testable-ui-components` | Frontend component design rules for deterministic demos, fixtures, and visual tests |
-| `wave` | Cut a Plan into numbered Waves of parallel PRs; write each task under `.waves/<topic>-<wave-no>/`; ask for worker models before launch; validate each PR; advance on merge |
-| `validate` | Coordinator: pin the PR, run reviews and challenges, synthesize, report; prefer GPT Pluto for code and security review workers (inherit if that slug is not on the Task allow-list) |
+| `wave` | Plan numbered Waves and write each task under `.waves/<topic>-<wave-no>/` |
+| `wave-iterate` | Evaluate and resume the next actionable Wave; choose models, summarize tasks, obtain consent, dispatch workers, validate PRs, and advance on merge |
+| `validate` | Coordinator: pin the PR, run reviews and challenges, synthesize, report; recommend Grok 4.5 Fast for code and security review workers when available |
 | `validate-with-code-review` | Diff review against repo standards and simplification |
 | `validate-with-security-review` | Diff review for trust-boundary and security defects |
 | `validate-by-challenge` | Independent pressure-test of each review finding |

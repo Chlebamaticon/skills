@@ -4,8 +4,8 @@
   "groupings": [
     {
       "title": "Waves",
-      "description": "Execute a Plan as numbered Waves of parallel pull requests, gated by validation, halt labels, and merge.",
-      "skills": ["wave"]
+      "description": "Plan, execute, and resume numbered Waves of isolated pull requests, gated by validation, halt labels, and merge.",
+      "skills": ["wave", "wave-iterate"]
     },
     {
       "title": "Validation",

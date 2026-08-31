@@ -1,6 +1,6 @@
 ---
 name: validate
-description: Validate a current Pull Request through code standards, security, adversarial challenge, synthesis, and GitHub reporting. Launches review and challenge workers as parallel Cursor Task subagents. Use when the user asks for a full validation cycle or to validate a PR.
+description: Validate a current Pull Request through code standards, security, adversarial challenge, synthesis, and GitHub reporting. Launches review and challenge workers through pi-subagents or Cursor Multitask. Use when the user asks for a full validation cycle or to validate a PR.
 ---
 
 # Validate
@@ -11,17 +11,20 @@ Read [the validation artifact contract](validation-contract.md) before starting.
 
 ## Subagent dispatch
 
-Workers are Cursor Task subagents (`subagent_type: generalPurpose`). Do not load-and-follow a worker skill in this conversation. Do not use the built-in `security-review` or `bugbot` types — they do not write these artifacts.
+Choose one available runtime for the entire validation run; never mix them within a phase. Cursor Multitask takes priority when it is active:
 
-A wave is every Task call in **one message**. Independent workers in a wave run in parallel.
+- **Cursor Multitask:** When Cursor Multitask Mode is active, use Cursor Task subagents (`generalPurpose`) as described below.
+- **Pi:** Otherwise, when `pi__subagent` is exposed, use it as described below.
 
-If this session is in Cursor Multitask Mode, set `run_in_background: true` on every Task call and end the turn. Do not poll. Start the next wave only after completion notifications and after each owned artifact exists and parses.
+For **Pi**, a phase is one top-level `pi__subagent` call with `async: true` and a `workflowScript`. Put independent workers in that script's single `await runs.all([...])` call. Do not make separate top-level calls for children in the same phase. The parent yields after launching a phase; completion notifications, not polling, start the next phase.
 
-If not in Multitask Mode, omit `run_in_background` so the wave blocks until every Task returns.
+For **Cursor Multitask**, a phase is every independent Cursor Task call in one assistant message. Set `run_in_background: true` on every call, end the turn after dispatch, and begin the next phase only after their completion notifications and artifact checks. Do not poll.
 
-Each worker prompt includes: the absolute `RUN_DIR`, instruction to follow the named skill and this contract, isolation (do not read sibling artifacts), the owned output file, and that file's done-when criterion. Subagents have no parent history — put all of that in the prompt. Do not paste another worker's findings into a prompt.
+Contract-artifact workers need `read`, `bash`, and `write`. In Pi, use the `delegate` role unless the project has an equivalent enabled artifact-writer role; give each child `context: "fresh"`, the repository as `cwd`, and an exact non-overlapping artifact ownership boundary. In Cursor, use `generalPurpose` tasks. They must not edit, commit, push, comment on, or otherwise modify product files.
 
-Workers do not pick models — the parent sets `model` on the Task call. For **validate-with-code-review** and **validate-with-security-review**, prefer **GPT Pluto**: set `model` to the slug from this run's Task allow-list whose name matches GPT Pluto. Do not invent a slug. If no matching slug is listed, omit `model` or pass `inherit`, run those reviews on the parent model, and tell the user that GPT Pluto was unavailable. Challenge, synthesize, and GitHub reporter workers keep the Task default (`inherit`) unless the user names another model.
+Each child prompt includes the absolute `RUN_DIR`, the absolute path of the relevant skill and this contract, its source-artifact read boundary, the one artifact it owns, and its done-when criterion. Subagents have no parent history — do not paste another worker's findings into a prompt. A child writes its owned contract artifact atomically at the path in `RUN_DIR`; a child output is only an optional handoff, not a substitute for that artifact.
+
+Workers do not pick models. Recommend **Grok 4.5 Fast** for **validate-with-code-review** and **validate-with-security-review**. Use it only when the selected runtime exposes an exact matching model ID; otherwise omit `model`, run the reviews on the parent model, and tell the user. Challenge, synthesize, and reporter workers inherit unless the user names an available model.
 
 ## 1. Pin the pull request and run
 
@@ -31,33 +34,33 @@ Resolve the PR from a number/URL supplied by the user, otherwise `gh pr view --j
 
 ## 2. Run independent reviews
 
-One message, two Task calls:
+Dispatch the two reviewers in parallel: one asynchronous Pi workflow with two fresh `delegate` children in `runs.all`, or two Cursor `generalPurpose` Tasks in one Multitask message:
 
 - Code: follow **validate-with-code-review** → `code-review.json`. Do not read `security-review.json`.
 - Security: follow **validate-with-security-review** → `security-review.json`. Do not read `code-review.json`.
 
-**Done when:** `code-review.json` and `security-review.json` both exist and each is a valid JSON array.
+After their completion notifications, verify that `code-review.json` and `security-review.json` both exist and each is a valid JSON array.
 
 ## 3. Challenge each review
 
-One message, two Task calls:
+Dispatch the two challengers in parallel: one asynchronous Pi workflow with two fresh `delegate` children in `runs.all`, or two Cursor `generalPurpose` Tasks in one Multitask message:
 
 - Code: follow **validate-by-challenge** with `source: code` → `challenge-code-review.json`. Read only `code-review.json`.
 - Security: follow **validate-by-challenge** with `source: security` → `challenge-security-review.json`. Read only `security-review.json`.
 
-**Done when:** both challenge artifacts exist and every source finding has exactly one verdict.
+After its completion notification, verify both challenge artifacts exist and every source finding has exactly one verdict.
 
 ## 4. Synthesize
 
-One Task call: follow **validate-synthentizer**. It reads coordinator, reviewer, and challenge artifacts from `RUN_DIR` on disk.
+Dispatch one asynchronous Pi workflow with one fresh `delegate` child, or one Cursor `generalPurpose` Task, that follows **validate-synthentizer**. It reads coordinator, reviewer, and challenge artifacts from `RUN_DIR` on disk.
 
-**Done when:** `synthesis.json` exists, is a valid JSON array, and contains the change summary plus every upheld or reframed finding exactly once.
+After its completion notification, verify `synthesis.json` exists, is a valid JSON array, and contains the change summary plus every upheld or reframed finding exactly once.
 
 ## 5. Report to GitHub
 
-Load and follow **validate-github-reporter**, giving it `RUN_DIR`.
+Dispatch one asynchronous Pi workflow with one fresh `delegate` child, or one Cursor `generalPurpose` Task, that follows **validate-github-reporter**, giving it `RUN_DIR`. This child alone has authority to post the report to GitHub.
 
-**Done when:** `github-report.json` records the URLs of the posted PR summary and every eligible inline comment.
+After its completion notification, verify `github-report.json` records the URLs of the posted PR summary and every eligible inline comment.
 
 ## 6. Return the result
 
