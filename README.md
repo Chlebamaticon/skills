@@ -35,6 +35,7 @@ npx skills add /Users/jakubchlebowicz/Workspace/GitHub/skills
 | Skill | Role |
 | --- | --- |
 | `demoable-visually-testable-ui-components` | Frontend component design rules for deterministic demos, fixtures, and visual tests |
+| `ux-components-glossary` | Atomic UI composition dictionary (atoms, molecules, organisms) when defining new frontend components |
 | `wave` | Plan numbered Waves and write each task under `.waves/<topic>-<wave-no>/` |
 | `wave-iterate` | Evaluate and resume the next actionable Wave; choose models, summarize tasks, obtain consent, dispatch workers, validate PRs, and advance on merge |
 | `validate` | Coordinator: pin the PR, run reviews and challenges, synthesize, report; recommend Grok 4.5 Fast for code and security review workers when available |
