@@ -43,8 +43,13 @@ npx skills add /Users/jakubchlebowicz/Workspace/GitHub/skills
 | `validate-by-challenge` | Independent pressure-test of each review finding |
 | `validate-synthentizer` | Canonical JSON report from challenged findings |
 | `validate-github-reporter` | PR summary plus eligible inline comments |
+| `memory-bank` | Layout and entry contract for the `.memory` / `$HOME/.memory` banks |
+| `remember` | Write crystallised decisions, patterns, practices, domains, sessions |
+| `recall` | Load applicable memory-bank entries before acting |
 
 Worker skills share `skills/validate/validation-contract.md`. The coordinator launches Cursor Task subagents; it reports and does not modify product code.
+
+`remember` and `recall` share `skills/memory-bank/GLOSSARY.md` and `ENTRY-FORMAT.md`. Repo bank: `.memory/`; global bank: `$HOME/.memory/`.
 
 ## Layout
 

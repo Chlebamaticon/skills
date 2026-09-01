@@ -18,6 +18,11 @@
         "validate-synthentizer",
         "validate-github-reporter"
       ]
+    },
+    {
+      "title": "Memory",
+      "description": "Durable session outcomes in a two-level memory-bank: remember crystallised decisions and recall them on later tasks.",
+      "skills": ["memory-bank", "remember", "recall"]
     }
   ]
 }

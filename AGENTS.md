@@ -17,6 +17,8 @@ Directory names are kebab-case and must match the `name` frontmatter field.
 
 `skills/validate/validation-contract.md` is the shared artifact schema. Worker skills (`validate-with-*`, `validate-by-challenge`, `validate-synthentizer`, `validate-github-reporter`) point at it with `../validate/validation-contract.md`. Keep those relative links valid when renaming or moving folders.
 
+`skills/memory-bank/GLOSSARY.md` and `ENTRY-FORMAT.md` are the memory-bank schema. `remember` and `recall` point at them with `../memory-bank/…`. Keep those relative links valid when renaming or moving folders.
+
 ## Adding a skill
 
 1. Create `skills/{name}/SKILL.md` with `name` and `description` frontmatter.
