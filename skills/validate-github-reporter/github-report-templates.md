@@ -2,11 +2,48 @@
 
 Fill placeholders from `synthesis.json` and `context.json`. Do not include dismissed findings. Post the summary with `gh pr comment <number> --body-file ...`. Post inline comments with `gh api repos/{owner}/{repo}/pulls/{pr}/comments`.
 
+## Doom status-bar face prefix
+
+Every posted comment (PR summary and each inline review comment) must start with one 48×48 Doom [status bar face](https://doom.fandom.com/wiki/Status_bar_face) image chosen from the **majority severity** among final findings in `synthesis.json` (exclude the change-summary object; ignore dismissed findings — they are already absent).
+
+### Majority selection
+
+Count final findings by severity (`blocking`, `important`, `minor`):
+
+| Condition | Face asset | Alt text |
+| --- | --- | --- |
+| No final findings | `doom-face-god.png` | Doom status face: god |
+| Majority `minor` | `doom-face-hurt-light.png` | Doom status face: hurt light |
+| Majority `important` | `doom-face-hurt-heavy.png` | Doom status face: hurt heavy |
+| Majority `blocking` | `doom-face-dead.png` | Doom status face: dead |
+
+**Ties:** when two or more severities share the highest count, pick the worse severity (`blocking` > `important` > `minor`). Example: 2 blocking + 2 important → `blocking` → dead face.
+
+Use the **same** face URL for the summary and every inline comment in that run.
+
+### Image markup
+
+Assets live under [`assets/`](assets/) in this skill. Published raw URLs (default branch `master`):
+
+```
+https://raw.githubusercontent.com/Chlebamaticon/skills/master/skills/validate-github-reporter/assets/{filename}
+```
+
+Prefix **exactly** this HTML line (forces 48×48 display), then a blank line, then the rest of the comment body:
+
+```html
+<img src="{face_url}" width="48" height="48" alt="{face_alt}">
+```
+
+Do not use Markdown image syntax for the face (GitHub may ignore size). Do not use faces larger than 48×48.
+
 ## PR summary comment
 
-Head the comment with `## Validation`. Group final findings by severity in this order: `blocking`, `important`, `minor`. When there are no final findings, keep the change summary and write `No findings.` under **Findings**.
+Head the comment with the Doom face prefix, then `## Validation`. Group final findings by severity in this order: `blocking`, `important`, `minor`. When there are no final findings, keep the change summary and write `No findings.` under **Findings**.
 
 ```markdown
+<img src="{face_url}" width="48" height="48" alt="{face_alt}">
+
 ## Validation
 
 **PR:** #{pr_number}
@@ -61,7 +98,11 @@ No findings.
 
 ### Summary example (with findings)
 
+Majority here is `blocking` (1) vs `important` (1) → tie → worse → dead face.
+
 ```markdown
+<img src="https://raw.githubusercontent.com/Chlebamaticon/skills/master/skills/validate-github-reporter/assets/doom-face-dead.png" width="48" height="48" alt="Doom status face: dead">
+
 ## Validation
 
 **PR:** #42
@@ -101,6 +142,8 @@ The refresh handler duplicates parsing logic from `parseAccessToken`, so expiry 
 ### Summary example (no findings)
 
 ```markdown
+<img src="https://raw.githubusercontent.com/Chlebamaticon/skills/master/skills/validate-github-reporter/assets/doom-face-god.png" width="48" height="48" alt="Doom status face: god">
+
 ## Validation
 
 **PR:** #42
@@ -117,9 +160,11 @@ No findings.
 
 ## Inline review comment
 
-Post only for `blocking` or `important` findings that have a `location` present in the PR diff. Body must start with `[validation:{id}]` on its own line.
+Post only for `blocking` or `important` findings that have a `location` present in the PR diff. Body must start with the Doom face prefix (same face as the summary for this run), then `[validation:{id}]` on its own line.
 
 ```markdown
+<img src="{face_url}" width="48" height="48" alt="{face_alt}">
+
 [validation:{id}]
 
 **{title}**
@@ -132,6 +177,8 @@ Keep the body short: evidence, impact, and one concrete fix. Do not repeat metad
 ### Inline example
 
 ```markdown
+<img src="https://raw.githubusercontent.com/Chlebamaticon/skills/master/skills/validate-github-reporter/assets/doom-face-dead.png" width="48" height="48" alt="Doom status face: dead">
+
 [validation:sec-001]
 
 **Set HttpOnly on refresh token cookie**
@@ -155,6 +202,7 @@ Record these in `github-report.json` → `unpublished` when an inline comment ca
 ```json
 {
   "summary_url": "https://github.com/{owner}/{repo}/pull/{pr}#issuecomment-{id}",
+  "face": "dead",
   "inline_comments": [
     { "id": "sec-001", "url": "https://github.com/{owner}/{repo}/pull/{pr}#discussion_r{id}" }
   ],
@@ -163,3 +211,5 @@ Record these in `github-report.json` → `unpublished` when an inline comment ca
   ]
 }
 ```
+
+`face` is one of `god`, `hurt-light`, `hurt-heavy`, `dead` — the majority-selected face for the run.
